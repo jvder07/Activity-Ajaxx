@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let inputName = $(this).val();
+        $("#nameDisplay").html("<strong>Name:</strong> " + inputName);
+            $("#justForm").submit(function (event) {
+                event.preventDefault(); 
+                let name = $("#myInput").val();
+                $("#nameDisplay").empty();
+                $("#dataDisplay").empty();
+                $.ajax({
+                    url: `https://api.nationalize.io/?name=${name}`,
+                    method: "GET",
+                    dataType: "json",
+                    success: function (response) {
+                        console.log(response);
+                        let nameDisplay = $("<span>")
+                            .text(name)
+                            .css("cursor", "pointer")
+                            .hover(
+                                function () {
+                                    $(this).css("color", "red");
+                                },
+                                function () {
+                                    $(this).css("color", "");
+                                }
+                            )
+                            .click(function () {
+                                $(this).remove();
+                                $("#dataDisplay").empty();
+                            });
+                        $("#nameDisplay").html("<strong>Name:</strong> ").append(nameDisplay);
+                        if (response.country) {
+                            $("#dataDisplay").append("<h3>These are the Possible Countries</h3>");
+                            response.country.forEach(country => {
+                                $("#dataDisplay").append(`<p>${country.country_id} - Probability: ${country.probability.toFixed(2)}</p>`);
+                            });
+                        } else {
+                            $("#dataDisplay").append("<p>No data available.</p>");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error: " + error);
+                    },
+                });
+            });
+        });
+    </script>
+</head>
+<body> 
+    <section>
+        <h3>Possible Countries of a Person's Name</h3>
+        <p class="instructions">Instructions: Type any names one at the time and click the submit button,
+        and then click the name to reset.
+        </p>
+        <form id="justForm">
+            <input type="text" id="myInput" placeholder="Type a name" />
+            <button type="submit">Submit</button>
+        </form>
+        <p class="R">Results will appear below</p>
+        <div id="nameDisplay"></div>
+        <div id="dataDisplay"></div>
+    </section>
+</body>
+</html>
