@@ -11,7 +11,8 @@
             let inputName = $(this).val();
         $("#nameDisplay").html("<strong>Name:</strong> " + inputName);
             $("#justForm").submit(function (event) {
-                event.preventDefault(); 
+                event.preventDefault();
+                alert("Form is been Submited"); 
                 let name = $("#myInput").val();
                 $("#nameDisplay").empty();
                 $("#dataDisplay").empty();
